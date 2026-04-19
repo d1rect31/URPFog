@@ -20,7 +20,9 @@ namespace Meryuhi.Rendering
         class FullScreenFogRenderPass : ScriptableRenderPass
         {
             private PassData _passData;
+#if !UNITY_6000_4_OR_NEWER
             private RTHandle _copiedColor;
+#endif
 
             private static readonly int BlitTextureShaderID = Shader.PropertyToID("_BlitTexture");
             private static readonly int BlitScaleBias = Shader.PropertyToID("_BlitScaleBias");
@@ -39,7 +41,9 @@ namespace Meryuhi.Rendering
                 .Select(mode => ($"_{nameof(FullScreenFog.noiseMode).ToUpper()}_{mode.ToString().ToUpper()}", mode)).ToArray();
             private static readonly int NoiseTexShaderID = Shader.PropertyToID("_NoiseTex");
             private static readonly int NoiseParamsShaderID = Shader.PropertyToID("_NoiseParams");
+#if !UNITY_6000_4_OR_NEWER
             private static readonly string CopiedColorRTName = $"_{FullScreenFog.Name}CopiedColor";
+#endif
             private static readonly string CopyColorPassName = $"{FullScreenFog.Name}CopyColorPass";
             private static readonly string MainPassName = $"{FullScreenFog.Name}MainPass";
 
@@ -53,6 +57,7 @@ namespace Meryuhi.Rendering
                 _passData = passData;
             }
 
+#if !UNITY_6000_4_OR_NEWER
             ///From <see cref="FullScreenPassRendererFeature.FullScreenRenderPass"/>
             [Obsolete]
             public override void OnCameraSetup(CommandBuffer cmd, ref RenderingData renderingData)
@@ -72,10 +77,13 @@ namespace Meryuhi.Rendering
                 desc.depthStencilFormat = GraphicsFormat.None;
                 RenderingUtils.ReAllocateHandleIfNeeded(ref _copiedColor, desc, name: CopiedColorRTName);
             }
+#endif
 
             public void Dispose()
             {
+#if !UNITY_6000_4_OR_NEWER
                 _copiedColor?.Release();
+#endif
             }
 
             private static void ExecuteCopyColorPass(RasterCommandBuffer cmd, RTHandle sourceTexture)
@@ -149,6 +157,7 @@ namespace Meryuhi.Rendering
                 cmd.DrawProcedural(Matrix4x4.identity, material, 0, MeshTopology.Triangles, 3, 1);
             }
 
+#if !UNITY_6000_4_OR_NEWER
             [Obsolete]
             public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
             {
@@ -168,6 +177,7 @@ namespace Meryuhi.Rendering
                 cmd.Clear();
                 CommandBufferPool.Release(cmd);
             }
+#endif
 
             public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
             {
@@ -337,7 +347,10 @@ namespace Meryuhi.Rendering
             //TODO: maybe we do not need color input
             _renderPass.ConfigureInput(ScriptableRenderPassInput.Color | ScriptableRenderPassInput.Depth);
 
+#if !UNITY_6000_4_OR_NEWER
+            // The Compatibility Mode path samples the active camera color, so it must force an intermediate target.
             _renderPass.requiresIntermediateTexture = true;
+#endif
 
             renderer.EnqueuePass(_renderPass);
         }

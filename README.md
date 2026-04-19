@@ -6,7 +6,14 @@ This project will provide some URP-based fog effects, and implement it in a rela
 
 - URP v17
 
-  For URP v14~16, check urp14 branch
+### Unity 6 Compatibility Note
+
+Unity 6000.4 removed the URP `Compatibility Mode` option. This package keeps the old non-RenderGraph path only for Unity versions below `6000.4`, and uses the RenderGraph path on `6000.4+`.
+
+- Unity `6000.0` to `6000.3`: RenderGraph and `Compatibility Mode` are both supported.
+- Unity `6000.4+`: only the RenderGraph path is used.
+
+For URP v14~16, check urp14 branch
 
 ## Installation
 
