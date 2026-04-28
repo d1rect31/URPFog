@@ -1,4 +1,4 @@
-﻿using UnityEditor;
+using UnityEditor;
 using UnityEditor.Rendering;
 
 namespace Meryuhi.Rendering
@@ -10,11 +10,11 @@ namespace Meryuhi.Rendering
         SerializedDataParameter _intensity;
         SerializedDataParameter _color;
         SerializedDataParameter _densityMode;
-        SerializedDataParameter _startLine;
-        SerializedDataParameter _endLine;
+        SerializedDataParameter _startDistance;
         SerializedDataParameter _startHeight;
-        SerializedDataParameter _endHeight;
         SerializedDataParameter _density;
+        SerializedDataParameter _heightFalloff;
+        SerializedDataParameter _depthFalloff;
 
         SerializedDataParameter _noiseMode;
         SerializedDataParameter _noiseTexture;
@@ -31,11 +31,11 @@ namespace Meryuhi.Rendering
             _intensity = Unpack(o.Find(x => x.intensity));
             _color = Unpack(o.Find(x => x.color));
             _densityMode = Unpack(o.Find(x => x.densityMode));
-            _startLine = Unpack(o.Find(x => x.startLine));
-            _endLine = Unpack(o.Find(x => x.endLine));
+            _startDistance = Unpack(o.Find(x => x.startDistance));
             _startHeight = Unpack(o.Find(x => x.startHeight));
-            _endHeight = Unpack(o.Find(x => x.endHeight));
             _density = Unpack(o.Find(x => x.density));
+            _heightFalloff = Unpack(o.Find(x => x.heightFalloff));
+            _depthFalloff = Unpack(o.Find(x => x.depthFalloff));
 
             _noiseMode = Unpack(o.Find(x => x.noiseMode));
             _noiseTexture = Unpack(o.Find(x => x.noiseTexture));
@@ -56,25 +56,26 @@ namespace Meryuhi.Rendering
             var densityMode = (FullScreenFogDensityMode)_densityMode.value.intValue;
             PropertyField(_densityMode);
 
-            if (FullScreenFog.UseStartLine(mode))
+            if (FullScreenFog.UseStartDistance(mode))
             {
-                PropertyField(_startLine);
-            }
-            if (FullScreenFog.UseEndLine(mode, densityMode))
-            {
-                PropertyField(_endLine);
+                PropertyField(_startDistance);
             }
             if (FullScreenFog.UseStartHeight(mode))
             {
                 PropertyField(_startHeight);
             }
-            if (FullScreenFog.UseEndHeight(mode, densityMode))
-            {
-                PropertyField(_endHeight);
-            }
             if (FullScreenFog.UseIntensity(densityMode))
             {
                 PropertyField(_density);
+            }
+
+            if (mode == FullScreenFogMode.Depth || mode == FullScreenFogMode.Distance || mode == FullScreenFogMode.HeightDistance)
+            {
+                PropertyField(_depthFalloff);
+            }
+            if (mode == FullScreenFogMode.Height || mode == FullScreenFogMode.HeightDistance)
+            {
+                PropertyField(_heightFalloff);
             }
 
             var noiseMode = (FullScreenFogNoiseMode)_noiseMode.value.intValue;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
@@ -34,7 +34,12 @@ namespace Meryuhi.Rendering
             private static readonly (string Name, FullScreenFogMode Value)[] DistanceModeShaderKeywords = Enum.GetValues(typeof(FullScreenFogMode))
                 .Cast<FullScreenFogMode>()
                 .Select(mode => ($"_{nameof(FullScreenFog.mode).ToUpper()}_{mode.ToString().ToUpper()}", mode)).ToArray();
-            private static readonly int MainParamsShaderID = Shader.PropertyToID("_MainParams");
+            private static readonly int DensityShaderID = Shader.PropertyToID("_Density");
+            private static readonly int StartDistanceShaderID = Shader.PropertyToID("_StartDistance");
+            private static readonly int StartHeightShaderID = Shader.PropertyToID("_StartHeight");
+            private static readonly int HeightFalloffShaderID = Shader.PropertyToID("_HeightFalloff");
+            private static readonly int DepthFalloffShaderID = Shader.PropertyToID("_DepthFalloff");
+            private static readonly int ColorShaderID = Shader.PropertyToID("_Color");
 
             private static readonly (string Name, FullScreenFogNoiseMode Value)[] NoiseModeShaderKeywords = Enum.GetValues(typeof(FullScreenFogNoiseMode))
                 .Cast<FullScreenFogNoiseMode>()
@@ -100,7 +105,7 @@ namespace Meryuhi.Rendering
                 }
                 var color = fog.color.value;
                 color.a = fog.intensity.value;
-                material.color = color;
+                material.SetColor(ColorShaderID, color);
 
                 var densityMode = fog.densityMode.value;
                 foreach (var (Name, Value) in ModeShaderKeywords)
@@ -108,35 +113,11 @@ namespace Meryuhi.Rendering
                     CoreUtils.SetKeyword(material, Name, Value == densityMode);
                 }
 
-                var fogParams = new Vector4();
-                if (FullScreenFog.UseStartLine(mode))
-                {
-                    fogParams.x = fog.startLine.value;
-                }
-                if (FullScreenFog.UseEndLine(mode, densityMode))
-                {
-                    var delta = fog.endLine.value - fogParams.x;
-                    fogParams.y = delta == 0 ? float.MaxValue : 1 / delta;
-                }
-                var isHeightMode = FullScreenFog.UseStartHeight(mode);
-                if (isHeightMode)
-                {
-                    fogParams.x = fog.startHeight.value;
-                }
-                if (FullScreenFog.UseEndHeight(mode, densityMode))
-                {
-                    var delta = fogParams.x - fog.endHeight.value;
-                    fogParams.y = delta == 0 ? float.MaxValue : 1 / delta;
-                }
-                if (FullScreenFog.UseIntensity(densityMode))
-                {
-                    fogParams.y = fog.density.value;
-                }
-                if (isHeightMode)/*Because the height fog calculation direction is reversed, we need to reverse the sign*/
-                {
-                    fogParams.y *= -1;
-                }
-                material.SetVector(MainParamsShaderID, fogParams);
+                material.SetFloat(DensityShaderID, fog.density.value);
+                material.SetFloat(StartDistanceShaderID, fog.startDistance.value);
+                material.SetFloat(StartHeightShaderID, fog.startHeight.value);
+                material.SetFloat(HeightFalloffShaderID, fog.heightFalloff.value);
+                material.SetFloat(DepthFalloffShaderID, fog.depthFalloff.value);
 
                 foreach (var (Name, Value) in NoiseModeShaderKeywords)
                 {

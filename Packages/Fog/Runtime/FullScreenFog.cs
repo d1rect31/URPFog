@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
@@ -22,6 +22,10 @@ namespace Meryuhi.Rendering
         /// Use the height in Y asix for calculation.
         /// </summary>
         Height,
+        /// <summary>
+        /// Combine height and depth fog.
+        /// </summary>
+        HeightDistance,
     }
 
     /// <summary>
@@ -135,35 +139,33 @@ namespace Meryuhi.Rendering
         [Tooltip("Density mode of the fog.")]
         public FullScreenFogDensityModeParameter densityMode = new(FullScreenFogDensityMode.ExponentialSquared);
         /// <summary>
-        /// Start depth or distance.
+        /// Start distance.
         /// </summary>
-        [Tooltip("Start depth or distance.")]
-        public FloatParameter startLine = new(0f);
-        internal static bool UseStartLine(FullScreenFogMode mode) => mode == FullScreenFogMode.Depth || mode == FullScreenFogMode.Distance;
-        /// <summary>
-        /// End depth or distance.
-        /// </summary>
-        [Tooltip("End depth or distance.")]
-        public FloatParameter endLine = new(10f);
-        internal static bool UseEndLine(FullScreenFogMode mode, FullScreenFogDensityMode densityMode) => UseStartLine(mode) && densityMode == FullScreenFogDensityMode.Linear;
+        [Tooltip("Start distance.")]
+        public FloatParameter startDistance = new(0f);
+        internal static bool UseStartDistance(FullScreenFogMode mode) => mode == FullScreenFogMode.Depth || mode == FullScreenFogMode.Distance || mode == FullScreenFogMode.HeightDistance;
         /// <summary>
         /// Start height.
         /// </summary>
         [Tooltip("Start height.")]
         public FloatParameter startHeight = new(5f);
-        internal static bool UseStartHeight(FullScreenFogMode mode) => mode == FullScreenFogMode.Height;
-        /// <summary>
-        /// End height.
-        /// </summary>
-        [Tooltip("End height.")]
-        public FloatParameter endHeight = new(0f);
-        internal static bool UseEndHeight(FullScreenFogMode mode, FullScreenFogDensityMode densityMode) => UseStartHeight(mode) && densityMode == FullScreenFogDensityMode.Linear;
+        internal static bool UseStartHeight(FullScreenFogMode mode) => mode == FullScreenFogMode.Height || mode == FullScreenFogMode.HeightDistance;
         /// <summary>
         /// Factor of the density mode.
         /// </summary>
         [Tooltip("Factor of the density mode.")]
-        public ClampedFloatParameter density = new (0.1f, 0f, 1f);
+        public FloatParameter density = new (0.1f);
         internal static bool UseIntensity(FullScreenFogDensityMode mode) => mode == FullScreenFogDensityMode.Exponential || mode == FullScreenFogDensityMode.ExponentialSquared;
+        /// <summary>
+        /// Height falloff for combined mode.
+        /// </summary>
+        [Tooltip("Height falloff for combined mode.")]
+        public ClampedFloatParameter heightFalloff = new(0.1f, 0f, 1f);
+        /// <summary>
+        /// Depth falloff for combined mode.
+        /// </summary>
+        [Tooltip("Depth falloff for combined mode.")]
+        public ClampedFloatParameter depthFalloff = new(0.1f, 0f, 1f);
 
         [Header("Noise")]
         /// <summary>
