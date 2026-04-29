@@ -39,6 +39,7 @@ namespace Meryuhi.Rendering
             private static readonly int StartHeightShaderID = Shader.PropertyToID("_StartHeight");
             private static readonly int HeightFalloffShaderID = Shader.PropertyToID("_HeightFalloff");
             private static readonly int DepthFalloffShaderID = Shader.PropertyToID("_DepthFalloff");
+            private static readonly int HeightInfluenceShaderID = Shader.PropertyToID("_HeightInfluence");
             private static readonly int ColorShaderID = Shader.PropertyToID("_Color");
 
             private static readonly (string Name, FullScreenFogNoiseMode Value)[] NoiseModeShaderKeywords = Enum.GetValues(typeof(FullScreenFogNoiseMode))
@@ -118,6 +119,7 @@ namespace Meryuhi.Rendering
                 material.SetFloat(StartHeightShaderID, fog.startHeight.value);
                 material.SetFloat(HeightFalloffShaderID, fog.heightFalloff.value);
                 material.SetFloat(DepthFalloffShaderID, fog.depthFalloff.value);
+                material.SetFloat(HeightInfluenceShaderID, fog.heightInfluence.value);
 
                 foreach (var (Name, Value) in NoiseModeShaderKeywords)
                 {

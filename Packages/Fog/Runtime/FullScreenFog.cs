@@ -166,6 +166,11 @@ namespace Meryuhi.Rendering
         /// </summary>
         [Tooltip("Depth falloff for combined mode.")]
         public ClampedFloatParameter depthFalloff = new(0.1f, 0f, 1f);
+        /// <summary>
+        /// Influence of height fog in combined mode.
+        /// </summary>
+        [Tooltip("Influence of height fog in combined mode.")]
+        public ClampedFloatParameter heightInfluence = new(1f, 0f, 1f);
 
         [Header("Noise")]
         /// <summary>

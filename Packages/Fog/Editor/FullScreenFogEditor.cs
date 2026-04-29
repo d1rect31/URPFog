@@ -15,6 +15,7 @@ namespace Meryuhi.Rendering
         SerializedDataParameter _density;
         SerializedDataParameter _heightFalloff;
         SerializedDataParameter _depthFalloff;
+        SerializedDataParameter _heightInfluence;
 
         SerializedDataParameter _noiseMode;
         SerializedDataParameter _noiseTexture;
@@ -36,6 +37,7 @@ namespace Meryuhi.Rendering
             _density = Unpack(o.Find(x => x.density));
             _heightFalloff = Unpack(o.Find(x => x.heightFalloff));
             _depthFalloff = Unpack(o.Find(x => x.depthFalloff));
+            _heightInfluence = Unpack(o.Find(x => x.heightInfluence));
 
             _noiseMode = Unpack(o.Find(x => x.noiseMode));
             _noiseTexture = Unpack(o.Find(x => x.noiseTexture));
@@ -76,6 +78,10 @@ namespace Meryuhi.Rendering
             if (mode == FullScreenFogMode.Height || mode == FullScreenFogMode.HeightDistance)
             {
                 PropertyField(_heightFalloff);
+            }
+            if (mode == FullScreenFogMode.HeightDistance)
+            {
+                PropertyField(_heightInfluence);
             }
 
             var noiseMode = (FullScreenFogNoiseMode)_noiseMode.value.intValue;
